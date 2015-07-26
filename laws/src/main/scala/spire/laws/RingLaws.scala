@@ -10,7 +10,7 @@ import org.scalacheck.Arbitrary._
 import org.scalacheck.Prop._
 
 object RingLaws {
-  def apply[A : Eq : Arbitrary](implicit _pred: Predicate[A]) = new RingLaws[A] {
+  def apply[A : Eq : Arbitrary](implicit _pred: Predicate[A]): RingLaws[A] = new RingLaws[A] {
     def Arb = implicitly[Arbitrary[A]]
     def pred = _pred
     val nonZeroLaws = new GroupLaws[A] {
@@ -38,7 +38,7 @@ trait RingLaws[A] extends GroupLaws[A] {
 
   // multiplicative groups
 
-  def multiplicativeSemigroup(implicit A: MultiplicativeSemigroup[A]) = new MultiplicativeProperties(
+  def multiplicativeSemigroup(implicit A: MultiplicativeSemigroup[A]): MultiplicativeProperties = new MultiplicativeProperties(
     base = _.semigroup(A.multiplicative),
     parent = None,
     "prodn(a, 1) === a" → forAll((a: A) =>
@@ -55,7 +55,7 @@ trait RingLaws[A] extends GroupLaws[A] {
     )
   )
 
-  def multiplicativeMonoid(implicit A: MultiplicativeMonoid[A]) = new MultiplicativeProperties(
+  def multiplicativeMonoid(implicit A: MultiplicativeMonoid[A]): MultiplicativeProperties = new MultiplicativeProperties(
     base = _.monoid(A.multiplicative),
     parent = Some(multiplicativeSemigroup),
     "prodn(a, 0) === one" → forAll((a: A) =>
@@ -69,7 +69,7 @@ trait RingLaws[A] extends GroupLaws[A] {
     )
   )
 
-  def multiplicativeGroup(implicit A: MultiplicativeGroup[A]) = new MultiplicativeProperties(
+  def multiplicativeGroup(implicit A: MultiplicativeGroup[A]): MultiplicativeProperties = new MultiplicativeProperties(
     base = _.group(A.multiplicative),
     parent = Some(multiplicativeMonoid),
     "reciprocal consistent" → forAll((x: A) =>
@@ -77,7 +77,7 @@ trait RingLaws[A] extends GroupLaws[A] {
     )
   )
 
-  def multiplicativeAbGroup(implicit A: MultiplicativeAbGroup[A]) = new MultiplicativeProperties(
+  def multiplicativeAbGroup(implicit A: MultiplicativeAbGroup[A]): MultiplicativeProperties = new MultiplicativeProperties(
     base = _.abGroup(A.multiplicative),
     parent = Some(multiplicativeGroup)
   )
@@ -85,7 +85,7 @@ trait RingLaws[A] extends GroupLaws[A] {
 
   // rings
 
-  def semiring(implicit A: Semiring[A]) = new RingProperties(
+  def semiring(implicit A: Semiring[A]): RingProperties = new RingProperties(
     name = "semiring",
     al = additiveSemigroup,
     ml = multiplicativeSemigroup,
@@ -98,21 +98,21 @@ trait RingLaws[A] extends GroupLaws[A] {
     )
   )
 
-  def rng(implicit A: Rng[A]) = new RingProperties(
+  def rng(implicit A: Rng[A]): RingProperties = new RingProperties(
     name = "rng",
     al = additiveAbGroup,
     ml = multiplicativeSemigroup,
     parents = Seq(semiring)
   )
 
-  def rig(implicit A: Rig[A]) = new RingProperties(
+  def rig(implicit A: Rig[A]): RingProperties = new RingProperties(
     name = "rig",
     al = additiveMonoid,
     ml = multiplicativeMonoid,
     parents = Seq(semiring)
   )
 
-  def ring(implicit A: Ring[A]) = new RingProperties(
+  def ring(implicit A: Ring[A]): RingProperties = new RingProperties(
     // TODO fromParents
     name = "ring",
     al = additiveAbGroup,
@@ -120,7 +120,7 @@ trait RingLaws[A] extends GroupLaws[A] {
     parents = Seq(rig, rng)
   )
 
-  def euclideanRing(implicit A: EuclideanRing[A]) = RingProperties.fromParent(
+  def euclideanRing(implicit A: EuclideanRing[A]): RingProperties = RingProperties.fromParent(
     // TODO tests?!
     name = "euclidean ring",
     parent = ring
@@ -136,7 +136,7 @@ trait RingLaws[A] extends GroupLaws[A] {
   // any more, it is not immediately clear that desired properties like
   // zero * x == x * zero hold.
   // Luckily, these follow from the other field and group axioms.
-  def field(implicit A: Field[A]) = new RingProperties(
+  def field(implicit A: Field[A]): RingProperties = new RingProperties(
     name = "field",
     al = additiveAbGroup,
     ml = multiplicativeAbGroup,
@@ -160,7 +160,7 @@ trait RingLaws[A] extends GroupLaws[A] {
   }
 
   object RingProperties {
-    def fromParent(name: String, parent: RingProperties, props: (String, Prop)*) =
+    def fromParent(name: String, parent: RingProperties, props: (String, Prop)*): RingProperties =
       new RingProperties(name, parent.al, parent.ml, Seq(parent), props: _*)
   }
 
@@ -173,7 +173,7 @@ trait RingLaws[A] extends GroupLaws[A] {
   ) extends RuleSet {
     def nonZero: Boolean = false
 
-    def _ml =
+    def _ml: RuleSet =
       if (nonZero)
         new RuleSet with HasOneParent {
           val name = ml.name
@@ -184,7 +184,7 @@ trait RingLaws[A] extends GroupLaws[A] {
       else
         ml
 
-    def bases = Seq("additive" → al, "multiplicative" → _ml)
+    def bases: Seq[(String, RuleSet)] = Seq("additive" → al, "multiplicative" → _ml)
   }
 
 }

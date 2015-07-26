@@ -9,7 +9,7 @@ import org.scalacheck.{Arbitrary, Prop}
 import org.scalacheck.Prop._
 
 object ActionLaws {
-  def apply[G: Eq: Arbitrary, A: Eq: Arbitrary] = new ActionLaws[G, A] {
+  def apply[G: Eq: Arbitrary, A: Eq: Arbitrary]: ActionLaws[G, A] = new ActionLaws[G, A] {
     val scalarLaws = GroupLaws[G]
     def EquA = Eq[A]
     def ArbA = implicitly[Arbitrary[A]]
@@ -25,7 +25,7 @@ trait ActionLaws[G, A] extends Laws {
   implicit def EquA: Eq[A]
   implicit def ArbA: Arbitrary[A]
 
-    def leftSemigroupAction(implicit G: LeftAction[A, G], G0: Semigroup[G]) = new ActionProperties(
+  def leftSemigroupAction(implicit G: LeftAction[A, G], G0: Semigroup[G]): ActionProperties = new ActionProperties(
     name = "leftSemigroupAction",
     sl = _.semigroup(G0),
     parents = Seq.empty,
@@ -35,7 +35,7 @@ trait ActionLaws[G, A] extends Laws {
     }
   )
 
-  def rightSemigroupAction(implicit G: RightAction[A, G], G0: Semigroup[G]) = new ActionProperties(
+  def rightSemigroupAction(implicit G: RightAction[A, G], G0: Semigroup[G]): ActionProperties = new ActionProperties(
     name = "rightSemigroupAction",
     sl = _.semigroup(G0),
     parents = Seq.empty,
@@ -45,13 +45,13 @@ trait ActionLaws[G, A] extends Laws {
     }
   )
 
-  def semigroupAction(implicit G: Action[A, G], G0: Semigroup[G]) = new ActionProperties(
+  def semigroupAction(implicit G: Action[A, G], G0: Semigroup[G]): ActionProperties = new ActionProperties(
     name = "semigroupAction",
     sl = _.semigroup(G0),
     parents = Seq(leftSemigroupAction, rightSemigroupAction)
   )
 
-  def leftMonoidAction(implicit G: LeftAction[A, G], G0: Monoid[G]) = new ActionProperties(
+  def leftMonoidAction(implicit G: LeftAction[A, G], G0: Monoid[G]): ActionProperties = new ActionProperties(
     name = "leftMonoidAction",
     sl = _.monoid(G0),
     parents = Seq(leftSemigroupAction),
@@ -61,7 +61,7 @@ trait ActionLaws[G, A] extends Laws {
     }
   )
 
-  def rightMonoidAction(implicit G: RightAction[A, G], G0: Monoid[G]) = new ActionProperties(
+  def rightMonoidAction(implicit G: RightAction[A, G], G0: Monoid[G]): ActionProperties = new ActionProperties(
     name = "rightMonoidAction",
     sl = _.monoid(G0),
     parents = Seq(rightSemigroupAction),
@@ -71,13 +71,13 @@ trait ActionLaws[G, A] extends Laws {
     }
   )
 
-  def monoidAction(implicit G: Action[A, G], G0: Monoid[G]) = new ActionProperties(
+  def monoidAction(implicit G: Action[A, G], G0: Monoid[G]): ActionProperties = new ActionProperties(
     name = "monoidAction",
     sl = _.monoid(G0),
     parents = Seq(leftMonoidAction, rightMonoidAction)
   )
 
-  def groupAction(implicit G: Action[A, G], G0: Group[G]) = new ActionProperties(
+  def groupAction(implicit G: Action[A, G], G0: Group[G]): ActionProperties = new ActionProperties(
     name = "groupAction",
     sl = _.group(G0),
     parents = Seq(monoidAction),
@@ -87,12 +87,12 @@ trait ActionLaws[G, A] extends Laws {
     }
   )
 
-  def additiveMonoidAction(implicit G: AdditiveAction[A, G], G0: AdditiveMonoid[G]) = new AdditiveProperties(
+  def additiveMonoidAction(implicit G: AdditiveAction[A, G], G0: AdditiveMonoid[G]): AdditiveProperties = new AdditiveProperties(
     base = monoidAction(G.additive, G0.additive),
     parent = None
   )
 
-  def multiplicativeMonoidAction(implicit G: MultiplicativeAction[A, G], G0: MultiplicativeMonoid[G]) = new MultiplicativeProperties(
+  def multiplicativeMonoidAction(implicit G: MultiplicativeAction[A, G], G0: MultiplicativeMonoid[G]): MultiplicativeProperties = new MultiplicativeProperties(
     base = monoidAction(G.multiplicative, G0.multiplicative),
     parent = None
   )

@@ -10,7 +10,7 @@ import org.scalacheck.{Arbitrary, Prop}
 import org.scalacheck.Prop._
 
 object PartialGroupLaws {
-  def apply[A : Eq : Arbitrary] = new PartialGroupLaws[A] {
+  def apply[A : Eq : Arbitrary]: PartialGroupLaws[A] = new PartialGroupLaws[A] {
     def Equ = Eq[A]
     def Arb = implicitly[Arbitrary[A]]
   }
@@ -18,7 +18,7 @@ object PartialGroupLaws {
 
 trait PartialGroupLaws[A] extends GroupLaws[A] {
 
-  def semigroupoid(implicit A: Semigroupoid[A]) = new GroupProperties(
+  def semigroupoid(implicit A: Semigroupoid[A]): GroupProperties = new GroupProperties(
     name = "semigroupoid",
     parent = None,
     "associative: a |+|?? b && b |+|?? c imply (a |+| b) |+|?? c" → forAll((a: A, b: A, c: A) =>
@@ -32,7 +32,7 @@ trait PartialGroupLaws[A] extends GroupLaws[A] {
     )
   )
 
-  def groupoid(implicit A: Groupoid[A]) = new GroupProperties(
+  def groupoid(implicit A: Groupoid[A]): GroupProperties = new GroupProperties(
     name = "groupoid",
     parent = Some(semigroupoid),
     "left identity" → forAll((a: A) =>

@@ -10,7 +10,7 @@ import org.scalacheck.{Arbitrary, Prop}
 import org.scalacheck.Prop._
 
 object LatticeLaws {
-  def apply[A : Eq : Arbitrary] = new LatticeLaws[A] {
+  def apply[A : Eq : Arbitrary]: LatticeLaws[A] = new LatticeLaws[A] {
     def Equ = Eq[A]
     def Arb = implicitly[Arbitrary[A]]
   }
@@ -22,7 +22,7 @@ trait LatticeLaws[A] extends Laws {
   implicit def Arb: Arbitrary[A]
 
 
-  def joinSemilattice(implicit A: JoinSemilattice[A]) = new LatticeProperties(
+  def joinSemilattice(implicit A: JoinSemilattice[A]): LatticeProperties = new LatticeProperties(
     name = "joinSemilattice",
     parents = Nil,
     "join.associative" → forAll((x: A, y: A, z: A) =>
@@ -36,7 +36,7 @@ trait LatticeLaws[A] extends Laws {
     )
   )
 
-  def meetSemilattice(implicit A: MeetSemilattice[A]) = new LatticeProperties(
+  def meetSemilattice(implicit A: MeetSemilattice[A]): LatticeProperties = new LatticeProperties(
     name = "meetSemilattice",
     parents = Nil,
     "meet.associative" → forAll((x: A, y: A, z: A) =>
@@ -50,7 +50,7 @@ trait LatticeLaws[A] extends Laws {
     )
   )
 
-  def lattice(implicit A: Lattice[A]) = new LatticeProperties(
+  def lattice(implicit A: Lattice[A]): LatticeProperties = new LatticeProperties(
     name = "lattice",
     parents = Seq(joinSemilattice, meetSemilattice),
     "absorption" → forAll((x: A, y: A) =>
@@ -59,7 +59,7 @@ trait LatticeLaws[A] extends Laws {
     )
   )
 
-  def boundedJoinSemilattice(implicit A: BoundedJoinSemilattice[A]) = new LatticeProperties(
+  def boundedJoinSemilattice(implicit A: BoundedJoinSemilattice[A]): LatticeProperties = new LatticeProperties(
     name = "boundedJoinSemilattice",
     parents = Seq(joinSemilattice),
     "join.identity" → forAll((x: A) =>
@@ -67,7 +67,7 @@ trait LatticeLaws[A] extends Laws {
     )
   )
 
-  def boundedMeetSemilattice(implicit A: BoundedMeetSemilattice[A]) = new LatticeProperties(
+  def boundedMeetSemilattice(implicit A: BoundedMeetSemilattice[A]): LatticeProperties = new LatticeProperties(
     name = "boundedMeetSemilattice",
     parents = Seq(meetSemilattice),
       "meet.identity" → forAll((x: A) =>
@@ -75,17 +75,17 @@ trait LatticeLaws[A] extends Laws {
       )
   )
 
-  def boundedBelowLattice(implicit A: Lattice[A] with BoundedJoinSemilattice[A]) = new LatticeProperties(
+  def boundedBelowLattice(implicit A: Lattice[A] with BoundedJoinSemilattice[A]): LatticeProperties = new LatticeProperties(
     name = "boundedBelowLattice",
     parents = Seq(boundedJoinSemilattice, lattice)
   )
 
-  def boundedAboveLattice(implicit A: Lattice[A] with BoundedMeetSemilattice[A]) = new LatticeProperties(
+  def boundedAboveLattice(implicit A: Lattice[A] with BoundedMeetSemilattice[A]): LatticeProperties = new LatticeProperties(
     name = "boundedAboveLattice",
     parents = Seq(boundedMeetSemilattice, lattice)
   )
 
-  def boundedLattice(implicit A: BoundedLattice[A]) = new LatticeProperties(
+  def boundedLattice(implicit A: BoundedLattice[A]): LatticeProperties = new LatticeProperties(
     name = "boundedLattice",
     parents = Seq(boundedJoinSemilattice, boundedMeetSemilattice, lattice)
   )

@@ -9,7 +9,7 @@ import org.scalacheck.{Arbitrary, Prop}
 import org.scalacheck.Prop._
 
 object GroupLaws {
-  def apply[A : Eq : Arbitrary] = new GroupLaws[A] {
+  def apply[A : Eq : Arbitrary]: GroupLaws[A] = new GroupLaws[A] {
     def Equ = Eq[A]
     def Arb = implicitly[Arbitrary[A]]
   }
@@ -22,7 +22,7 @@ trait GroupLaws[A] extends Laws {
 
   // groups
 
-  def semigroup(implicit A: Semigroup[A]) = new GroupProperties(
+  def semigroup(implicit A: Semigroup[A]): GroupProperties = new GroupProperties(
     name = "semigroup",
     parent = None,
     "associative" → forAll((x: A, y: A, z: A) =>
@@ -36,7 +36,7 @@ trait GroupLaws[A] extends Laws {
     )
   )
 
-  def monoid(implicit A: Monoid[A]) = new GroupProperties(
+  def monoid(implicit A: Monoid[A]): GroupProperties = new GroupProperties(
     name = "monoid",
     parent = Some(semigroup),
     "left identity" → forAll((x: A) =>
@@ -56,7 +56,7 @@ trait GroupLaws[A] extends Laws {
     )
   )
 
-  def group(implicit A: Group[A]) = new GroupProperties(
+  def group(implicit A: Group[A]): GroupProperties = new GroupProperties(
     name = "group",
     parent = Some(monoid),
     "left inverse" → forAll((x: A) =>
@@ -67,7 +67,7 @@ trait GroupLaws[A] extends Laws {
     )
   )
 
-  def abGroup(implicit A: AbGroup[A]) = new GroupProperties(
+  def abGroup(implicit A: AbGroup[A]): GroupProperties = new GroupProperties(
     name = "abelian group",
     parent = Some(group),
     "commutative" → forAll((x: A, y: A) =>
@@ -78,7 +78,7 @@ trait GroupLaws[A] extends Laws {
 
   // additive groups
 
-  def additiveSemigroup(implicit A: AdditiveSemigroup[A]) = new AdditiveProperties(
+  def additiveSemigroup(implicit A: AdditiveSemigroup[A]): AdditiveProperties = new AdditiveProperties(
     base = semigroup(A.additive),
     parent = None,
     "sumn(a, 1) === a" → forAll((a: A) =>
@@ -95,7 +95,7 @@ trait GroupLaws[A] extends Laws {
     )
   )
 
-  def additiveMonoid(implicit A: AdditiveMonoid[A]) = new AdditiveProperties(
+  def additiveMonoid(implicit A: AdditiveMonoid[A]): AdditiveProperties = new AdditiveProperties(
     base = monoid(A.additive),
     parent = Some(additiveSemigroup),
     "sumn(a, 0) === zero" → forAll((a: A) =>
@@ -109,7 +109,7 @@ trait GroupLaws[A] extends Laws {
     )
   )
 
-  def additiveGroup(implicit A: AdditiveGroup[A]) = new AdditiveProperties(
+  def additiveGroup(implicit A: AdditiveGroup[A]): AdditiveProperties = new AdditiveProperties(
     base = group(A.additive),
     parent = Some(additiveMonoid),
     "minus consistent" → forAll((x: A, y: A) =>
@@ -117,7 +117,7 @@ trait GroupLaws[A] extends Laws {
     )
   )
 
-  def additiveAbGroup(implicit A: AdditiveAbGroup[A]) = new AdditiveProperties(
+  def additiveAbGroup(implicit A: AdditiveAbGroup[A]): AdditiveProperties = new AdditiveProperties(
     base = abGroup(A.additive),
     parent = Some(additiveGroup)
   )

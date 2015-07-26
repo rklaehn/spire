@@ -9,7 +9,7 @@ import org.scalacheck.{Arbitrary, Prop}
 import org.scalacheck.Prop._
 
 object VectorSpaceLaws {
-  def apply[V: Eq: Arbitrary, A: Eq: Arbitrary: Predicate] = new VectorSpaceLaws[V, A] {
+  def apply[V: Eq: Arbitrary, A: Eq: Arbitrary: Predicate]: VectorSpaceLaws[V, A] = new VectorSpaceLaws[V, A] {
     val scalarLaws = RingLaws[A]
     val vectorLaws = GroupLaws[V]
   }
@@ -26,7 +26,7 @@ trait VectorSpaceLaws[V, A] extends Laws {
   import vectorLaws.{ Equ => EqV, Arb => ArV }
 
 
-  def module(implicit V: Module[V, A]) = new SpaceProperties(
+  def module(implicit V: Module[V, A]): SpaceProperties = new SpaceProperties(
     name = "module",
     sl = _.rng(V.scalar),
     vl = _.abGroup(V.additive),
@@ -48,14 +48,14 @@ trait VectorSpaceLaws[V, A] extends Laws {
     )*/
   )
 
-  def vectorSpace(implicit V: VectorSpace[V, A]) = new SpaceProperties(
+  def vectorSpace(implicit V: VectorSpace[V, A]): SpaceProperties = new SpaceProperties(
     name = "vector space",
     sl = _.field(V.scalar),
     vl = _.abGroup(V.additive),
     parents = Seq(module)
   )
 
-  def metricSpace(implicit V: MetricSpace[V, A], o: Order[A], A: Rng[A]) = new SpaceProperties(
+  def metricSpace(implicit V: MetricSpace[V, A], o: Order[A], A: Rng[A]): SpaceProperties = new SpaceProperties(
     name = "metric space",
     sl = _.emptyRuleSet,
     vl = _.emptyRuleSet,
@@ -72,7 +72,7 @@ trait VectorSpaceLaws[V, A] extends Laws {
     )
   )
 
-  def normedVectorSpace(implicit V: NormedVectorSpace[V, A], ev0: Order[A], ev1: Signed[A]) = new SpaceProperties(
+  def normedVectorSpace(implicit V: NormedVectorSpace[V, A], ev0: Order[A], ev1: Signed[A]): SpaceProperties = new SpaceProperties(
     name = "normed vector space",
     sl = _.field(V.scalar),
     vl = _.abGroup(V.additive),
@@ -89,7 +89,7 @@ trait VectorSpaceLaws[V, A] extends Laws {
     )
   )
 
-  def linearity(f: V => A)(implicit V: Module[V, A]) = new SimpleRuleSet(
+  def linearity(f: V => A)(implicit V: Module[V, A]): SimpleRuleSet = new SimpleRuleSet(
     name = "linearity",
 
     "homogeneity" → forAll((r: A, v: V) =>
@@ -100,7 +100,7 @@ trait VectorSpaceLaws[V, A] extends Laws {
     )
   )
 
-  def innerProductSpace(implicit V: InnerProductSpace[V, A], A: Order[A], A0: Signed[A]) = SpaceProperties.fromParent(
+  def innerProductSpace(implicit V: InnerProductSpace[V, A], A: Order[A], A0: Signed[A]): SpaceProperties = SpaceProperties.fromParent(
     name = "inner-product space",
     parent = vectorSpace,
 
@@ -114,7 +114,7 @@ trait VectorSpaceLaws[V, A] extends Laws {
   )
 
   object SpaceProperties {
-    def fromParent(name: String, parent: SpaceProperties, props: (String, Prop)*) =
+    def fromParent(name: String, parent: SpaceProperties, props: (String, Prop)*): SpaceProperties =
       new SpaceProperties(name, parent.sl, parent.vl, Seq(parent), props: _*)
   }
 

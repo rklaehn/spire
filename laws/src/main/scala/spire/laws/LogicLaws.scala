@@ -11,7 +11,7 @@ import org.scalacheck.{Arbitrary, Prop}
 import org.scalacheck.Prop._
 
 object LogicLaws {
-  def apply[A: Eq: Arbitrary] = new LogicLaws[A] {
+  def apply[A: Eq: Arbitrary]: LogicLaws[A] = new LogicLaws[A] {
     def Equ = Eq[A]
     def Arb = implicitly[Arbitrary[A]]
   }
@@ -22,7 +22,7 @@ trait LogicLaws[A] extends Laws {
   implicit def Equ: Eq[A]
   implicit def Arb: Arbitrary[A]
 
-  def heyting(implicit A: Heyting[A]) =
+  def heyting(implicit A: Heyting[A]): DefaultRuleSet =
     new DefaultRuleSet(
       name = "heyting",
       parent = None,
@@ -80,7 +80,7 @@ trait LogicLaws[A] extends Laws {
       "(0 → x) = 1" -> forAll { (x: A) => (A.zero imp x) === A.one }
     )
 
-  def bool(implicit A: Bool[A]) =
+  def bool(implicit A: Bool[A]): DefaultRuleSet =
     new DefaultRuleSet(
       name = "bool",
       parent = Some(heyting),

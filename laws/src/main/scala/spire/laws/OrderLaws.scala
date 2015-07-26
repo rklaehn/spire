@@ -9,7 +9,7 @@ import org.scalacheck.{Arbitrary, Prop}
 import org.scalacheck.Prop._
 
 object OrderLaws {
-  def apply[A : Eq : Arbitrary] = new OrderLaws[A] {
+  def apply[A : Eq : Arbitrary]: OrderLaws[A] = new OrderLaws[A] {
     def Equ = Eq[A]
     def Arb = implicitly[Arbitrary[A]]
   }
@@ -20,7 +20,7 @@ trait OrderLaws[A] extends Laws {
   implicit def Equ: Eq[A]
   implicit def Arb: Arbitrary[A]
 
-  def partialOrder(implicit A: PartialOrder[A]) = new OrderProperties(
+  def partialOrder(implicit A: PartialOrder[A]): OrderProperties = new OrderProperties(
     name = "partialOrder",
     parent = None,
     "reflexitivity" → forAll((x: A) =>
@@ -43,7 +43,7 @@ trait OrderLaws[A] extends Laws {
     )
   )
 
-  def order(implicit A: Order[A]) = new OrderProperties(
+  def order(implicit A: Order[A]): OrderProperties = new OrderProperties(
     name = "order",
     parent = Some(partialOrder),
     "totality" → forAll((x: A, y: A) =>

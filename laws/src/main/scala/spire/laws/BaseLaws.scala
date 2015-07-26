@@ -9,7 +9,7 @@ import org.scalacheck.{Arbitrary, Prop}
 import org.scalacheck.Prop._
 
 object BaseLaws {
-  def apply[A : Eq : Arbitrary] = new BaseLaws[A] {
+  def apply[A : Eq : Arbitrary]: BaseLaws[A] = new BaseLaws[A] {
     def Equ = Eq[A]
     def Arb = implicitly[Arbitrary[A]]
   }
@@ -21,7 +21,7 @@ trait BaseLaws[A] extends Laws {
   implicit def Arb: Arbitrary[A]
 
 
-  def signed(implicit A: Signed[A]) = new SimpleRuleSet(
+  def signed(implicit A: Signed[A]): SimpleRuleSet = new SimpleRuleSet(
     name = "signed",
     "abs non-negative" → forAll((x: A) =>
       x.abs.sign != Sign.Negative
@@ -34,7 +34,7 @@ trait BaseLaws[A] extends Laws {
     )
   )
 
-  def metricSpace[R](implicit MSA: MetricSpace[A, R], SR: Signed[R], OR: Order[R], ASR: AdditiveSemigroup[R]) = new SimpleRuleSet(
+  def metricSpace[R](implicit MSA: MetricSpace[A, R], SR: Signed[R], OR: Order[R], ASR: AdditiveSemigroup[R]): SimpleRuleSet = new SimpleRuleSet(
     name = "metricSpace",
     "non-negative" → forAll((a1: A, a2: A) =>
       MSA.distance(a1, a2).sign != Sign.Negative
