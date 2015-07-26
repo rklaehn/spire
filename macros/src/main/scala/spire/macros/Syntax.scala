@@ -53,9 +53,9 @@ case class SyntaxUtil[C <: Context with Singleton](val c: C) {
 
   import c.universe._
 
-  def name(s: String) = freshTermName(c)(s + "$")
+  def name(s: String): c.universe.TermName = freshTermName(c)(s + "$")
 
-  def names(bs: String*) = bs.toList.map(name)
+  def names(bs: String*): Seq[c.universe.TermName] = bs.toList.map(name)
 
   def isClean(es: c.Expr[_]*): Boolean =
     es.forall {
