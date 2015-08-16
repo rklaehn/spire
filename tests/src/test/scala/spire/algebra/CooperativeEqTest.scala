@@ -30,16 +30,17 @@ class CooperativeEqTest extends FunSuite {
     assert(Foo(1) =~= Bar(1))
     assert(Bar(1) =~= Foo(1))
     assert(Foo(1) =~= Baz(1))
-//    assert(Baz(1) =~= Foo(1))
+    assert(Baz(1) =~= Foo(1))
   }
   test("reify") {
     import scala.reflect.runtime.{universe => u}
-    assert(u.reify { 1 =~= 1 }.toString.contains("cooperativeEqFromEq"))
+    assert(u.reify { 1 =~= 1 }.toString.contains("convertRHS"))
     assert(u.reify { 1L =~= 1 }.toString.contains("convertRHS"))
     assert(u.reify { 1 =~= 1L }.toString.contains("convertLHS"))
     assert(u.reify { Foo(1) =~= Bar(1) }.toString.contains("convertLHS"))
     assert(u.reify { Bar(1) =~= Foo(1) }.toString.contains("convertRHS"))
     assert(u.reify { Foo(1) =~= Baz(1) }.toString.contains("FooBazEq"))
+    assert(u.reify { Baz(1) =~= Foo(1) }.toString.contains("flip"))
     // println(u.reify { 1 =~= "x" }.toString.contains("could not find implicit"))
   }
 }
