@@ -1,10 +1,14 @@
 package spire.algebra
 
 import org.scalatest.FunSuite
+import spire.math.Rational
 import spire.syntax.cooperativeEq._
 import spire.implicits._
 
 class CooperativeEqTest extends FunSuite {
+
+  // disable scalatest ===
+  override def convertToEqualizer[T](left: T): Equalizer[T] = ???
 
   case class Foo(x: Int)
 
@@ -23,6 +27,10 @@ class CooperativeEqTest extends FunSuite {
     override def eqv(a: Foo, b: Baz): Boolean = a.x == b.x
   }
 
+  implicit object BarEq extends CooperativeEq[Bar, Bar] {
+    override def eqv(a: Bar, b: Bar): Boolean = a.x == b.x
+  }
+
   test("simple") {
     assert(1 =~= 1)
     assert(1L =~= 1)
@@ -31,6 +39,7 @@ class CooperativeEqTest extends FunSuite {
     assert(Bar(1) =~= Foo(1))
     assert(Foo(1) =~= Baz(1))
     assert(Baz(1) =~= Foo(1))
+    assert(Bar(1) =~= Bar(1))
   }
   test("reify") {
     import scala.reflect.runtime.{universe => u}
@@ -41,6 +50,13 @@ class CooperativeEqTest extends FunSuite {
     assert(u.reify { Bar(1) =~= Foo(1) }.toString.contains("convertRHS"))
     assert(u.reify { Foo(1) =~= Baz(1) }.toString.contains("FooBazEq"))
     assert(u.reify { Baz(1) =~= Foo(1) }.toString.contains("flip"))
+    assert(u.reify { Bar(1) =~= Bar(1) }.toString.contains("BarEq"))
     // println(u.reify { 1 =~= "x" }.toString.contains("could not find implicit"))
+    println(u.reify {
+      Rational(1234) =~= 1234
+    }.toString)
+    println(u.reify {
+      Rational(1234) === 1234
+    }.toString)
   }
 }
