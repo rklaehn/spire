@@ -51,3 +51,27 @@ class CooperativeEqBenchmarkRational {
     x.consume(a =~= 1234)
   }
 }
+
+@BenchmarkMode(Array(Mode.AverageTime))
+@OutputTimeUnit(TimeUnit.NANOSECONDS)
+@State(Scope.Thread)
+class CooperativeEqBenchmarkString {
+
+  var a: String = "1234"
+
+  var b: String = "1235"
+
+  @Setup
+  def setup(): Unit = {
+  }
+
+  @Benchmark
+  def equal(x: Blackhole): Unit = {
+    x.consume(a equals b)
+  }
+
+  @Benchmark
+  def eqeq(x: Blackhole): Unit = {
+    x.consume(a == b)
+  }
+}
