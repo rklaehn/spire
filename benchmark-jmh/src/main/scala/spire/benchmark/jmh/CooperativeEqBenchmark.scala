@@ -32,6 +32,11 @@ class CooperativeEqBenchmarkRational {
   }
 
   @Benchmark
+  def eqeqInt(x: Blackhole): Unit = {
+    x.consume(a == 1234)
+  }
+
+  @Benchmark
   def eqeqeq(x: Blackhole): Unit = {
     x.consume(a === b)
   }
@@ -43,6 +48,6 @@ class CooperativeEqBenchmarkRational {
 
   @Benchmark
   def cooperativeEqInt(x: Blackhole): Unit = {
-    x.consume(a =~= 0)
+    x.consume(a =~= 1234)
   }
 }
