@@ -1,5 +1,6 @@
 package spire.syntax
 
+import language.experimental.macros
 import spire.algebra.CooperativeEq
 
 final class CooperativeEqOps[A](lhs:A) {
