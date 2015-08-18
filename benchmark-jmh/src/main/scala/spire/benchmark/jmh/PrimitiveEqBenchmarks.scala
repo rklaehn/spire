@@ -15,6 +15,11 @@ object StrictEqSyntax {
   }
 }
 
+object WrapperSyntax {
+
+  implicit class LongWrapper(val x: Long) { lhs => def =+=(rhs: LongWrapper): Boolean = lhs.x == rhs.x }
+}
+
 @BenchmarkMode(Array(Mode.AverageTime))
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @State(Scope.Thread)
@@ -50,5 +55,11 @@ class LongEqualityCheckBenchmark {
   def strictEqMacro(x: Blackhole): Unit = {
     import spire.syntax.strictEq._
     x.consume(a ==== b)
+  }
+
+  @Benchmark
+  def wrapperEq(x: Blackhole): Unit = {
+    import WrapperSyntax._
+    x.consume(a =+= b)
   }
 }
