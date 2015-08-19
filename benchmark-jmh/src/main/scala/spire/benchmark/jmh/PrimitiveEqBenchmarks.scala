@@ -15,7 +15,6 @@ object StrictEqSyntax {
     def =====[U](rhs: U)(implicit ev: Eq[T], u2t: U =:= T) = ev.eqv(lhs, u2t(rhs))
   }
 }
-
 case class Foo(x: Int)
 case class Bar(x: Int)
 object FooBarEq {
@@ -30,6 +29,7 @@ object FooBarEq {
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @State(Scope.Thread)
 class LongCooperativeEqualityCheckBenchmark {
+
   import FooBarEq._
 
   var a: Long = 0L
@@ -67,6 +67,11 @@ class LongCooperativeEqualityCheckBenchmark {
   }
 }
 
+object WrapperSyntax {
+
+  implicit class LongWrapper(val x: Long) { lhs => def =+=(rhs: LongWrapper): Boolean = lhs.x == rhs.x }
+}
+
 @BenchmarkMode(Array(Mode.AverageTime))
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @State(Scope.Thread)
@@ -102,5 +107,11 @@ class LongEqualityCheckBenchmark {
   def strictEqMacro(x: Blackhole): Unit = {
     import spire.syntax.strictEq._
     x.consume(a ==== b)
+  }
+
+  @Benchmark
+  def wrapperEq(x: Blackhole): Unit = {
+    import WrapperSyntax._
+    x.consume(a =+= b)
   }
 }
