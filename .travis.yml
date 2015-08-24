@@ -19,3 +19,6 @@ notifications:
     on_success: change
     on_failure: always
 sudo: false
+cache:
+  directories:
+    $HOME/.ivy2/cache
