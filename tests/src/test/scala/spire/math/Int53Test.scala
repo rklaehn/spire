@@ -3,7 +3,15 @@ package spire.math
 import org.scalatest.FunSuite
 import spire.tests.SpireProperties
 
+import scala.annotation.switch
+
 class Int53Test extends FunSuite {
+
+  val x = Int53.Base
+  (x: @switch) match {
+    case Int53.Base ⇒ true
+    case _ ⇒ false
+  }
 
   test("base") {
     assert(Int53.Base == java.lang.Double.longBitsToDouble(0x7ca0000000000000L))
