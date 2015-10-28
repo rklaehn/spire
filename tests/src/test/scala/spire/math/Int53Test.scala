@@ -17,11 +17,16 @@ class Int53Test extends FunSuite {
     assert(Int53.Base == java.lang.Double.longBitsToDouble(0x7ca0000000000000L))
   }
 
-  test("overflow behavior") {
-    assert((Int53.maxValue + Int53.one).isPosInfinity)
-    assert((Int53.maxValue * Int53(2)).isPosInfinity)
-    assert((Int53.minValue - Int53.one).isNegInfinity)
-    assert((Int53.minValue - Int53(2)).isNegInfinity)
+  test("overflow") {
+    assert((Int53.MaxValue + Int53.one).isPosInfinity)
+    assert((Int53.MaxValue * Int53(2)).isPosInfinity)
+    assert((Int53.MinValue - Int53.one).isNegInfinity)
+    assert((Int53.MinValue - Int53(2)).isNegInfinity)
+  }
+
+  test("precision") {
+    assert((Int53.MaxValue - Int53.one).toLong == Int53.MaxValue.toLong - 1)
+    assert((Int53.MinValue + Int53.one).toLong == Int53.MinValue.toLong + 1)
   }
 }
 

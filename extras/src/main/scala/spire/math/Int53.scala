@@ -1,10 +1,20 @@
 package spire.math
 
-class Int53 private (private val value: Double) extends AnyVal { lhs ⇒
+import spire.algebra.Order
+
+class Int53 private (private[math] val value: Double) extends AnyVal { lhs ⇒
 
   import Int53._
 
   def unary_- : Int53 = new Int53(-value)
+
+  def <(rhs: Int53): Boolean = lhs.value < rhs.value
+
+  def >(rhs: Int53): Boolean = lhs.value > rhs.value
+
+  def <=(rhs: Int53): Boolean = lhs.value <= rhs.value
+
+  def >=(rhs: Int53): Boolean = lhs.value >= rhs.value
 
   def +(rhs: Int53): Int53 = new Int53(lhs.value + rhs.value)
 
@@ -26,6 +36,9 @@ class Int53 private (private val value: Double) extends AnyVal { lhs ⇒
     else
       (value / Base).toLong
 
+  def toDouble: Double =
+    value / Base
+
   override def toString: String =
     if(value.isNaN)
       value.toString
@@ -43,15 +56,26 @@ object Int53 {
     else
       new Int53(value)
 
-  private[math] final val Base = 1.9958403095347198E292 // java.lang.Double.longBitsToDouble(0x7ca0000000000000L)
+//  private[math] final val Base = 1.9958403095347198E292
+  private[math] final val Base = java.lang.Double.longBitsToDouble(0x7ca0000000000000L)
 
   def zero: Int53 = new Int53(0.0)
 
   def one: Int53 = new Int53(Base)
 
-  def maxValue: Int53 = new Int53(Double.MaxValue)
+  def MaxValue: Int53 = new Int53(Double.MaxValue)
 
-  def minValue: Int53 = new Int53(Double.MinValue)
+  def MinValue: Int53 = new Int53(Double.MinValue)
 
   def apply(value: Int): Int53 = new Int53(value * Base)
+}
+
+private[math] trait Int53Order extends Order[Int53] {
+  override def eqv(x:Int53, y:Int53): Boolean = x == y
+  override def neqv(x:Int53, y:Int53): Boolean = x != y
+  override def gt(x: Int53, y: Int53): Boolean = x > y
+  override def gteqv(x: Int53, y: Int53): Boolean = x >= y
+  override def lt(x: Int53, y: Int53): Boolean = x < y
+  override def lteqv(x: Int53, y: Int53): Boolean = x <= y
+  def compare(x: Int53, y: Int53): Int = java.lang.Double.compare(x.value, y.value)
 }
