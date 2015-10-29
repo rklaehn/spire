@@ -1,5 +1,7 @@
 package spire.math
 
+import java.math.BigInteger
+
 import spire.algebra.Order
 
 class Int53 private (private[math] val value: Double) extends AnyVal { lhs ⇒
@@ -36,6 +38,11 @@ class Int53 private (private[math] val value: Double) extends AnyVal { lhs ⇒
     else
       (value / Base).toLong
 
+  def toBigInteger: BigInteger = {
+    // todo: bypass long
+    BigInteger.valueOf(toLong)
+  }
+
   def toDouble: Double =
     value / Base
 
@@ -50,11 +57,11 @@ class Int53 private (private[math] val value: Double) extends AnyVal { lhs ⇒
 
 object Int53 {
 
-  private def mk(value: Double): Int53 =
+  private[math] def unsafeFromDouble(value: Double): Int53 =
     if(value.isNaN)
       throw new ArithmeticException
     else
-      new Int53(value)
+      new Int53(value * Base)
 
 //  private[math] final val Base = 1.9958403095347198E292
   private[math] final val Base = java.lang.Double.longBitsToDouble(0x7ca0000000000000L)
