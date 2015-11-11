@@ -4,9 +4,17 @@ import java.math.BigInteger
 
 import spire.algebra.Order
 
+import scala.annotation.tailrec
+
 class Int53 private (private[math] val value: Double) extends AnyVal { lhs ⇒
 
   import Int53._
+
+  def isZero: Boolean = value == 0D
+
+  def isOne: Boolean = value == Base
+
+  def abs: Int53 = new Int53(value.abs)
 
   def unary_- : Int53 = new Int53(-value)
 
@@ -24,7 +32,20 @@ class Int53 private (private[math] val value: Double) extends AnyVal { lhs ⇒
 
   def *(rhs: Int53): Int53 = new Int53((lhs.value / Base) * rhs.value)
 
-  def /(rhs: Int53): Int53 = new Int53((lhs.value / rhs.value).toLong * Base)
+  def %(rhs: Int53): Int53 = unsafeFromDouble((lhs.value / Base) % (rhs.value / Base))
+
+  def /(rhs: Int53): Int53 = {
+    val fractional = lhs.value / rhs.value
+    // we want "integer-like" behavior, but not convert to long since that is slow on JS
+    val rounded =
+      if(fractional < 0.0)
+        fractional.ceil
+      else
+        fractional.floor
+    new Int53(rounded * Base)
+  }
+
+  def compare(rhs: Int53) = java.lang.Double.compare(lhs.value, rhs.value)
 
   def isInfinity: Boolean = value.isInfinity
 
@@ -56,6 +77,22 @@ class Int53 private (private[math] val value: Double) extends AnyVal { lhs ⇒
 }
 
 object Int53 {
+
+  def gcd(x: Int53, y: Int53): Int53 =
+    new Int53(doubleGCD(x.toDouble, y.toDouble) * Base)
+
+  private def doubleGCD(x: Double, y: Double): Double = {
+
+    @tailrec
+    def gcd0(p: Double, q: Double): Double = {
+      if (q == 0)
+        p
+      else
+        gcd0(q, p % q)
+    }
+
+    gcd0(x.abs, y.abs)
+  }
 
   private[math] def unsafeFromDouble(value: Double): Int53 =
     if(value.isNaN)

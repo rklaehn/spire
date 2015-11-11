@@ -4,6 +4,18 @@ import java.math._
 sealed abstract class Integer { lhs ⇒
   import Integer._
 
+  final def signum: Int = this match {
+    case Small(x) ⇒ x.value.signum
+    case Large(x) ⇒ x.signum
+  }
+
+  final def compare(rhs: Integer) = (lhs, rhs) match {
+    case (Small(lhs), Small(rhs)) ⇒ lhs compare rhs
+    case (Small(lhs), Large(rhs)) ⇒ -rhs.signum
+    case (Large(lhs), Small(rhs)) ⇒ lhs.signum
+    case (Large(lhs), Large(rhs)) ⇒ lhs compareTo rhs
+  }
+
   final def +(rhs: Integer): Integer = (lhs, rhs) match {
     case (Small(lhs), Small(rhs)) ⇒
       val result = lhs + rhs
@@ -48,6 +60,34 @@ sealed abstract class Integer { lhs ⇒
       choose(lhs.toBigInteger divide rhs.toBigInteger)
   }
 
+  def %(rhs: Integer): Integer = (lhs, rhs) match {
+    case (Small(lhs), Small(rhs)) ⇒
+      val result = lhs % rhs
+      if(!result.value.isNaN)
+        Small(result)
+      else
+        throw new ArithmeticException("/ by zero")
+    case _ ⇒
+      choose(lhs.toBigInteger mod rhs.toBigInteger)
+  }
+
+  def /%(rhs: Integer): (Integer, Integer) = (lhs, rhs) match {
+    case (Small(lhs), Small(rhs)) ⇒
+      if(rhs.isZero)
+        throw new ArithmeticException("/ by zero")
+      else
+        (Small(lhs / rhs), Small(lhs % rhs))
+    case _ ⇒
+      val Array(q, r) = lhs.toBigInteger divideAndRemainder rhs.toBigInteger
+      (choose(q), choose(r))
+  }
+
+  def &(rhs: Integer): Integer = choose(lhs.toBigInteger and rhs.toBigInteger)
+
+  def |(rhs: Integer): Integer = choose(lhs.toBigInteger or rhs.toBigInteger)
+
+  def ^(rhs: Integer): Integer = choose(lhs.toBigInteger xor rhs.toBigInteger)
+
   def unary_- : Integer = this match {
     case Small(value) ⇒ Small(-value)
     case Large(value) ⇒ Large(value.negate)
@@ -76,6 +116,15 @@ object Integer {
   val one = apply(1)
 
   def apply(value: Int): Integer = Small(Int53(value))
+
+  def apply(value: Long): Integer = choose(BigInteger.valueOf(value))
+
+  def apply(value: BigInteger): Integer = choose(value)
+
+  def gcd(a: Integer, b: Integer): Integer = (a, b) match {
+    case (Small(a), Small(b)) ⇒ Small(Int53.gcd(a, b))
+    case _ ⇒ choose(a.toBigInteger gcd b.toBigInteger)
+  }
 
   private case class Small(value: Int53) extends Integer
 

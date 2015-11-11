@@ -40,6 +40,12 @@ class Int53Properties extends SpireProperties {
     assert(r1 == r2)
   }
 
+  property("gcd") {
+    forAll { (x: Int, y: Int) ⇒
+      assert(spire.math.gcd(x, y) == Int53.gcd(Int53(x), Int53(y)).toLong)
+    }
+  }
+
   property("negation") {
     forAll { x: Int ⇒
       assert(-x.toLong == (-Int53(x)).toLong)
