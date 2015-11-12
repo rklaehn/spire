@@ -6,7 +6,7 @@ import spire.algebra.Order
 
 import scala.annotation.tailrec
 
-class Int53 private (private[math] val value: Double) extends AnyVal { lhs ⇒
+class Int53 private (val value: Double) extends AnyVal { lhs ⇒
 
   import Int53._
 
