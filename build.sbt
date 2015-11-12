@@ -187,6 +187,7 @@ lazy val benchmark = project
   .settings(noPublishSettings)
   .settings(commonJvmSettings)
   .dependsOn(coreJVM)
+  .dependsOn(extrasJVM)
 
 lazy val benchmarkJmh: Project = project.in(file("benchmark-jmh"))
   .settings(moduleName := "spire-benchmark-jmh")

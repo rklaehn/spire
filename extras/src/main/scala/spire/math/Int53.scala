@@ -32,9 +32,15 @@ class Int53 private (private[math] val value: Double) extends AnyVal { lhs ⇒
 
   def *(rhs: Int53): Int53 = new Int53((lhs.value / Base) * rhs.value)
 
-  def %(rhs: Int53): Int53 = unsafeFromDouble((lhs.value / Base) % (rhs.value / Base))
+  def %(rhs: Int53): Int53 = {
+    if(rhs.isZero)
+      throw new ArithmeticException("/ by zero")
+    unsafeFromDouble((lhs.value / Base) % (rhs.value / Base))
+  }
 
   def /(rhs: Int53): Int53 = {
+    if(rhs.isZero)
+      throw new ArithmeticException("/ by zero")
     val fractional = lhs.value / rhs.value
     // we want "integer-like" behavior, but not convert to long since that is slow on JS
     val rounded =

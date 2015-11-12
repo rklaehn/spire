@@ -5,22 +5,22 @@ import java.math.BigInteger
 import org.scalatest.FunSuite
 import spire.tests.SpireProperties
 
-class IntegerTest extends FunSuite {
+class SafeIntTest extends FunSuite {
 
-  def isSmall(value: Integer) = value.getClass.getName.endsWith("Small")
+  def isSmall(value: SafeInt) = value.getClass.getName.endsWith("Small")
 
   test("switchSmallLarge") {
-    assert(isSmall(Integer(Int53.MaxValue.toLong)))
-    assert(!isSmall(Integer(Int53.MaxValue.toLong + 1)))
-    assert(isSmall(Integer(Int53.MaxValue.toLong + 1) - Integer.one))
+    assert(isSmall(SafeInt(Int53.MaxValue.toLong)))
+    assert(!isSmall(SafeInt(Int53.MaxValue.toLong + 1)))
+    assert(isSmall(SafeInt(Int53.MaxValue.toLong + 1) - SafeInt.one))
 
-    assert(isSmall(Integer(Int53.MinValue.toLong)))
-    assert(!isSmall(Integer(Int53.MinValue.toLong - 1)))
-    assert(isSmall(Integer(Int53.MinValue.toLong - 1) + Integer.one))
+    assert(isSmall(SafeInt(Int53.MinValue.toLong)))
+    assert(!isSmall(SafeInt(Int53.MinValue.toLong - 1)))
+    assert(isSmall(SafeInt(Int53.MinValue.toLong - 1) + SafeInt.one))
   }
 }
 
-class IntegerProperties extends SpireProperties {
+class SafeIntProperties extends SpireProperties {
 
   import spire.laws.arb.bigInteger
 
@@ -28,31 +28,31 @@ class IntegerProperties extends SpireProperties {
 
   private val minSmall = Int53.MinValue.toBigInteger
 
-  def isSmall(value: Integer) = value.getClass.getName.endsWith("Small")
+  def isSmall(value: SafeInt) = value.getClass.getName.endsWith("Small")
 
-  private def checkInvariants(x: Integer): Unit = {
+  private def checkInvariants(x: SafeInt): Unit = {
     val xi = x.toBigInteger
     val xIsSmall = !(xi.compareTo(maxSmall) > 0 || xi.compareTo(minSmall) < 0)
     assert(xIsSmall == isSmall(x))
   }
 
-  private def binaryOpTest(a: BigInteger, b: BigInteger, f1: (Integer, Integer) ⇒ Integer, f2: (BigInteger, BigInteger) ⇒ BigInteger): Unit = {
-    val t = f1(Integer(a), Integer(b))
+  private def binaryOpTest(a: BigInteger, b: BigInteger, f1: (SafeInt, SafeInt) ⇒ SafeInt, f2: (BigInteger, BigInteger) ⇒ BigInteger): Unit = {
+    val t = f1(SafeInt(a), SafeInt(b))
     checkInvariants(t)
     val r1 = t.toBigInteger
     val r2 = f2(a, b)
     assert(r1 == r2)
   }
 
-  private def binaryBooleanOpTest[T](a: BigInteger, b: BigInteger, f1: (Integer, Integer) ⇒ T, f2: (BigInteger, BigInteger) ⇒ T): Unit = {
-    val r1 = f1(Integer(a), Integer(b))
+  private def binaryBooleanOpTest[T](a: BigInteger, b: BigInteger, f1: (SafeInt, SafeInt) ⇒ T, f2: (BigInteger, BigInteger) ⇒ T): Unit = {
+    val r1 = f1(SafeInt(a), SafeInt(b))
     val r2 = f2(a, b)
     assert(r1 == r2)
   }
 
   property("negation") {
     forAll { x: BigInteger ⇒
-      assert(x.negate == (-Integer(x)).toBigInteger)
+      assert(x.negate == (-SafeInt(x)).toBigInteger)
     }
   }
 
@@ -90,7 +90,7 @@ class IntegerProperties extends SpireProperties {
 
   property("gcd") {
     forAll { (x: BigInteger, y: BigInteger) ⇒
-      binaryOpTest(x, y, Integer.gcd, _ gcd _)
+      binaryOpTest(x, y, SafeInt.gcd, _ gcd _)
     }
   }
 
