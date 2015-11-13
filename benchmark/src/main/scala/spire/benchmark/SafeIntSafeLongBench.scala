@@ -2,9 +2,7 @@ package spire.benchmark
 
 import spire.math.{SafeInt, SafeLong}
 
-object SafeIntSafeLongBench extends App {
-
-  val th = ichi.bench.Thyme.warmed(verbose = println)
+object SafeIntSafeLongBench {
 
   def sum1(n: Int): Any = {
     var t: SafeLong = SafeLong.zero
@@ -46,6 +44,9 @@ object SafeIntSafeLongBench extends App {
     t
   }
 
-  th.pbenchOffWarm("sum SafeLong vs. SafeInt")(th.Warm(sum1(1000000)))(th.Warm(sum2(1000000)))
-  th.pbenchOffWarm("product SafeLong vs. SafeInt")(th.Warm(product1(100)))(th.Warm(product2(100)))
+  def main(args: Array[String]): Unit = {
+    val th = ichi.bench.Thyme.warmed(verbose = println)
+    th.pbenchOffWarm("sum SafeLong vs. SafeInt")(th.Warm(sum1(1000000)))(th.Warm(sum2(1000000)))
+    th.pbenchOffWarm("product SafeLong vs. SafeInt")(th.Warm(product1(100)))(th.Warm(product2(100)))
+  }
 }
